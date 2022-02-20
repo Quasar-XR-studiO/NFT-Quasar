@@ -542,6 +542,11 @@ namespace ZBoom.Common.SpatialMap
         {
             RaribleApiController.GetItemById(id, resultListener);
         }
+        
+        public void GetRaribleItems(int size, IResultListener<RaribleCollection> resultListener)
+        {
+            RaribleApiController.GetItems(resultListener, size);
+        }
 
         #endregion
     }

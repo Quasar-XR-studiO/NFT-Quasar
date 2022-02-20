@@ -20,6 +20,7 @@ namespace ZBoom.Common.SpatialMap
 
         [SerializeField] private string m_DefaultItemId = "ETHEREUM:0x60f80121c31a0d46b5279700f9df786054aa5ee5:1017528";
         private string m_UrlGetItemById = "https://api.rarible.org/v0.1/items/";
+        private string m_UrlGetItems = "https://api.rarible.org/v0.1/items/all";
 
         private void Start()
         {
@@ -58,6 +59,37 @@ namespace ZBoom.Common.SpatialMap
                 jsonData = jsonData.Replace("@", "");
                 RaribleItem raribleItem = JsonUtility.FromJson<RaribleItem>(jsonData);
                 resultListener.OnSuccess(raribleItem, MESSAGE_SUCCESS);
+            }
+        }
+
+        public void GetItems()
+        {
+            string url = m_UrlGetItems + "?size=" + "20";
+            StartCoroutine(GetRequestItems(url, null));
+        }
+        
+        public void GetItems(IResultListener<RaribleCollection> resultListener, int size = 20)
+        {
+            string url = m_UrlGetItems + "?size=" + size;
+            StartCoroutine(GetRequestItems(url, resultListener));
+        }
+        
+        private IEnumerator GetRequestItems(string url, IResultListener<RaribleCollection> resultListener)
+        {
+            UnityWebRequest request = UnityWebRequest.Get(url);
+            yield return request.SendWebRequest();
+            if (request.isNetworkError)
+            {
+                Debug.Log(request.error);
+                resultListener.OnError($"{MESSAGE_ERROR} / {request.error}");
+            }
+            else
+            {
+                Debug.Log(request.downloadHandler.text);
+                string jsonData = request.downloadHandler.text;
+                jsonData = jsonData.Replace("@", "");
+                RaribleCollection raribleCollection = JsonUtility.FromJson<RaribleCollection>(jsonData);
+                resultListener.OnSuccess(raribleCollection, MESSAGE_SUCCESS);
             }
         }
     }

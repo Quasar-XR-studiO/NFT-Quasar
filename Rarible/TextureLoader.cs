@@ -35,11 +35,18 @@ public class TextureLoader
         }
         else
         {
-            Texture2D texture = ((DownloadHandlerTexture)request.downloadHandler).texture;
-            Rect rect = new Rect(0, 0, texture.width, texture.height);
-            Sprite sprite = Sprite.Create(texture, rect, new Vector2(0.5f, 0.5f), 100);
-            //image.sprite = sprite;
-            resultListener.OnSuccess(sprite, RaribleApiController.MESSAGE_SUCCESS);
+            Texture2D texture = ((DownloadHandlerTexture) request.downloadHandler).texture;
+            if (texture != null)
+            {
+                Rect rect = new Rect(0, 0, texture.width, texture.height);
+                Sprite sprite = Sprite.Create(texture, rect, new Vector2(0.5f, 0.5f), 100);
+                //image.sprite = sprite;
+                resultListener.OnSuccess(sprite, RaribleApiController.MESSAGE_SUCCESS);
+            }
+            else
+            {
+                resultListener.OnError(RaribleApiController.MESSAGE_ERROR);
+            }
         }
     }
 }

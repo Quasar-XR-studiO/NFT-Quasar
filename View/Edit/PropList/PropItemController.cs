@@ -92,7 +92,7 @@ namespace ZBoom.Common.SpatialMap
                 //NameText.fontStyle = FontStyles.Normal;
                 Background.transform.localScale = new Vector3(m_DefaultScale, m_DefaultScale, m_DefaultScale);
 
-                //PropGridController.Deselect(this);
+                //RaribleGridController.Deselect(this);
 
                 if (DeselectEvent != null)
                 {

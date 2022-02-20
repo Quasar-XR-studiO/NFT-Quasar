@@ -18,6 +18,7 @@ namespace ZBoom.Common.SpatialMap
         public PropController PropController;
         public GameObject PropCollectionGameObject;
         public PrefabGridController PrefabGridController;
+        public RaribleGridController RaribleGridController;
 
         public GameObject OutlinePrefab;
 
@@ -381,6 +382,11 @@ namespace ZBoom.Common.SpatialMap
             if (PrefabGridController != null)
             {
                 PrefabGridController.Deselect();
+            }
+
+            if (RaribleGridController != null)
+            {
+                RaribleGridController.Deselect();
             }
 
             Debug.LogWarning("SpatialMapGameObjectController DeselectTemplate " + "2");
