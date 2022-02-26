@@ -9,7 +9,7 @@ using ZBoom.Common.SpatialMap;
 
 public class ModelRaribleItemController : BaseRaribleItemController
 {
-    //public Image Image;
+    //public NftImage NftImage;
     public TextMeshProUGUI TitleTextView;
     public TextMeshProUGUI DescriptionTextView;
     public TextMeshProUGUI TypeTextView;
@@ -28,7 +28,7 @@ public class ModelRaribleItemController : BaseRaribleItemController
     {
         base.Awake();
         //m_TextureLoader = new TextureLoader();
-        //m_AspectRatioFitter = Image.GetComponent<AspectRatioFitter>();
+        //m_AspectRatioFitter = NftImage.GetComponent<AspectRatioFitter>();
         ModelDownloader = GetComponent<ModelDownloader>();
         Clear();
     }

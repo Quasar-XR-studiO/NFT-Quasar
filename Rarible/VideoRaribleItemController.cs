@@ -16,7 +16,7 @@ public class VideoRaribleItemController : BaseRaribleItemController
     public VideoPlayer VideoPlayer;
     public string UrlVideo = "";
 
-    //public Image Image;
+    //public NftImage NftImage;
     public GameObject Image;
     public TextMeshProUGUI TitleTextView;
     public TextMeshProUGUI DescriptionTextView;
@@ -32,7 +32,7 @@ public class VideoRaribleItemController : BaseRaribleItemController
     {
         base.Awake();
         m_TextureLoader = new TextureLoader();
-        //m_AspectRatioFitter = Image.GetComponent<AspectRatioFitter>();
+        //m_AspectRatioFitter = NftImage.GetComponent<AspectRatioFitter>();
 
         Clear();
     }
@@ -78,9 +78,9 @@ public class VideoRaribleItemController : BaseRaribleItemController
         VideoPlayer.url = originalContent.url;
         VideoPlayer.errorReceived += (source, message) =>
         {
-            //Image.SetActive(false);
-            //ErrorPanel.SetActive(true);
-            //ProgressPanel.SetActive(false);
+            //NftImage.SetActive(false);
+            //ErrorView.SetActive(true);
+            //ProgressView.SetActive(false);
             
             Image.SetActive(false);
             ErrorPanel.SetActive(false);
@@ -117,7 +117,7 @@ public class VideoRaribleItemController : BaseRaribleItemController
         {
             OnSuccess = (sprite, message) =>
             {
-                ProgressPanel.SetActive(false);
+                ProgressView.SetActive(false);
                 if (sprite.texture.width > sprite.texture.height)
                 {
                     m_AspectRatioFitter.aspectRatio = 10f;
@@ -127,12 +127,12 @@ public class VideoRaribleItemController : BaseRaribleItemController
                     m_AspectRatioFitter.aspectRatio = 0.1f;
                 }
 
-                Image.sprite = sprite;
+                NftImage.sprite = sprite;
             },
             OnError = errorMessage =>
             {
-                ProgressPanel.SetActive(false);
-                ErrorPanel.SetActive(true);
+                ProgressView.SetActive(false);
+                ErrorView.SetActive(true);
             }
         }));
         */

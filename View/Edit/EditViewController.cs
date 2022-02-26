@@ -165,7 +165,14 @@ namespace ZBoom.Common.SpatialMap
                 if (raribleItemController != null)
                 {
                     spatialMapItemData.isNft = true;
-                    spatialMapItemData.nft = raribleItemController.RaribleItem;
+                    spatialMapItemData.raribleNft = raribleItemController.RaribleItem;
+                }
+
+                BaseSolanaNftItemController solanaNftItemController = prop.GetComponent<BaseSolanaNftItemController>();
+                if (solanaNftItemController != null)
+                {
+                    spatialMapItemData.isNft = true;
+                    spatialMapItemData.solanaNft = solanaNftItemController.Nft;
                 }
 
                 spatialMapData.mapItems.Add(spatialMapItemData);

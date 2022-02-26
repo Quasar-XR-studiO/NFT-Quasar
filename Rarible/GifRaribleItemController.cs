@@ -8,7 +8,7 @@ using ZBoom.Common.SpatialMap;
 
 public class GifRaribleItemController : BaseRaribleItemController
 {
-    //public RawImage Image;
+    //public RawImage NftImage;
     public UniGifImage UniGifImage;
     public TextMeshProUGUI TitleTextView;
     public TextMeshProUGUI DescriptionTextView;
@@ -24,7 +24,7 @@ public class GifRaribleItemController : BaseRaribleItemController
     {
         base.Awake();
         m_TextureLoader = new TextureLoader();
-        //m_AspectRatioFitter = Image.GetComponent<AspectRatioFitter>();
+        //m_AspectRatioFitter = NftImage.GetComponent<AspectRatioFitter>();
         
         //Clear();
     }

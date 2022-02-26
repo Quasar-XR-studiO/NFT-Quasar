@@ -92,7 +92,7 @@ namespace ZBoom.Common.SpatialMap
                 //NameText.fontStyle = FontStyles.Normal;
                 Background.transform.localScale = new Vector3(m_DefaultScale, m_DefaultScale, m_DefaultScale);
 
-                //RaribleGridController.Deselect(this);
+                //SolanaNftGridController.Deselect(this);
 
                 if (DeselectEvent != null)
                 {

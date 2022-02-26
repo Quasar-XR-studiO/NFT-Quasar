@@ -96,7 +96,7 @@ public class ImageRaribleItemController : BaseRaribleItemController
     {
         string savePath = Path.Combine(Application.persistentDataPath, "data");
         savePath = Path.Combine(savePath, "Images");
-        savePath = Path.Combine(savePath, "logo.png");
+        savePath = Path.Combine(savePath, "NftImage.png");
         DownloadImage(url,savePath);
     }
     

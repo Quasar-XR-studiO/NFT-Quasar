@@ -199,7 +199,7 @@ namespace ZBoom.Common.SpatialMap
                         {
                             EditView.ImportMesh(sparseSpatialMapController.gameObject);
                         }
-                        
+
                         StartCoroutine(CreateWithDelay(sparseSpatialMapController, spatialMapData));
                     }
                 );
@@ -275,28 +275,6 @@ namespace ZBoom.Common.SpatialMap
                     }
 
                     StartCoroutine(CreateWithDelay(sparseSpatialMapController, spatialMapData));
-                    /*
-                    ObjectAR[] arObjects = sparseSpatialMapController.GetComponentsInChildren<ObjectAR>(true);
-                    for (int i = 0; i < arObjects.Length; i++)
-                    {
-                        ObjectAR objectAR = arObjects[i];
-                        SpatialMapItemData spatialMapItemData = spatialMapData.mapItems[i];
-                        //if (spatialMapItemData.isNft)
-                        {
-                            BaseRaribleItemController raribleItemController =
-                                objectAR.GetComponent<BaseRaribleItemController>();
-                            if (raribleItemController != null)
-                            {
-                                Content mainContent = RaribleContentCreator.GetMainContent(spatialMapItemData.nft);
-                                //raribleItemController.Create(spatialMapItemData.nft, mainContent);
-                                //StartCoroutine(CreateWithDelay(raribleItemController, spatialMapItemData.nft, mainContent));
-                                raribleItemController.CreateWithDelay(spatialMapItemData.nft, mainContent);
-                                
-                                Star
-                            }
-                        }
-                    }
-                    */
                 }
                 //objectCreatedEvent:ModifyObject
                 //mapLoadEvent:PreviewMapLoad,
@@ -305,7 +283,7 @@ namespace ZBoom.Common.SpatialMap
             Preview.SetMapSession(m_MapSession);
             Preview.gameObject.SetActive(true);
         }
-        
+
         private IEnumerator CreateWithDelay(
             SparseSpatialMapController sparseSpatialMapController,
             SpatialMapData spatialMapData)
@@ -337,24 +315,17 @@ namespace ZBoom.Common.SpatialMap
                         objectAR.GetComponent<BaseRaribleItemController>();
                     if (raribleItemController != null)
                     {
-                        Content mainContent = RaribleContentCreator.GetMainContent(spatialMapItemData.nft);
-                        raribleItemController.Create(spatialMapItemData.nft, mainContent);
+                        Content mainContent = RaribleContentCreator.GetMainContent(spatialMapItemData.raribleNft);
+                        raribleItemController.Create(spatialMapItemData.raribleNft, mainContent);
+                    }
+                    
+                    BaseSolanaNftItemController solanaNftItemController = 
+                        objectAR.GetComponent<BaseSolanaNftItemController>();
+                    if (solanaNftItemController != null)
+                    {
+                        solanaNftItemController.Create(spatialMapItemData.solanaNft);
                     }
                 }
-            }
-        }
-
-        private IEnumerator CreateWithDelay1(BaseRaribleItemController raribleItemController, RaribleItem raribleItem,
-            Content content)
-        {
-            yield return new WaitForSeconds(1f);
-            if (raribleItemController.gameObject.activeSelf)
-            {
-                raribleItemController.Create(raribleItem, content);
-            }
-            else
-            {
-                //StartCoroutine(CreateWithDelay(raribleItemController, raribleItem, content));
             }
         }
 
@@ -542,7 +513,7 @@ namespace ZBoom.Common.SpatialMap
         {
             RaribleApiController.GetItemById(id, resultListener);
         }
-        
+
         public void GetRaribleItems(int size, IResultListener<RaribleCollection> resultListener)
         {
             RaribleApiController.GetItems(resultListener, size);

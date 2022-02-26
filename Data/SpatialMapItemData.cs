@@ -1,4 +1,5 @@
 ﻿using System;
+using AllArt.Solana.Nft;
 using Rarible;
 
 namespace ZBoom.Common.SpatialMap
@@ -10,7 +11,9 @@ namespace ZBoom.Common.SpatialMap
         public string name = "";
 
         public bool isNft = false;
-        public RaribleItem nft = new RaribleItem();
+        //public RaribleItem nft = new RaribleItem();
+        public RaribleItem raribleNft = null;
+        public Nft solanaNft = null;
         
         public float[] position = new float[3];
         public float[] rotation = new float[4];

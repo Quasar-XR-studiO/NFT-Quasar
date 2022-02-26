@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using AllArt.Solana.Nft;
 using easyar;
 using Michsky.UI.ModernUIPack;
 using Rarible;
@@ -18,7 +19,9 @@ namespace ZBoom.Common.SpatialMap
         public PropController PropController;
         public GameObject PropCollectionGameObject;
         public PrefabGridController PrefabGridController;
-        public RaribleGridController RaribleGridController;
+        public GameObject SolanaNftCollectionGameObject;
+        public SolanaNftGridController SolanaGridController;
+        public SolanaNftOwnedGridController SolanaOwnedGridController;
 
         public GameObject OutlinePrefab;
 
@@ -38,15 +41,18 @@ namespace ZBoom.Common.SpatialMap
 
         public GameObject StopEditButton;
         public GameObject DeleteButton;
-        public GameObject DragonAddPointButton;
+        //public GameObject DragonAddPointButton;
 
         private PropItemController m_SelectedPropItemController;
+
         //private BaseRaribleItemController m_SelectedRaribleItemController;
         private RaribleItem m_SelectedRaribleItem;
-        
+        private Nft m_SelectedSolanaNft;
+
         [SerializeField] private TouchController m_TouchController;
         [SerializeField] private GizmoController m_GizmoController;
         [SerializeField] private RaribleContentCreator m_RaribleContentCreator;
+        [SerializeField] private SolanaNftContentCreator m_SolanaNftContentCreator;
         private MapSession m_MapSession;
         private GameObject m_SelectedGameObject;
         private bool m_IsNft = false;
@@ -65,6 +71,7 @@ namespace ZBoom.Common.SpatialMap
         {
             m_SelectedPropItemController = null;
             m_SelectedRaribleItem = null;
+            m_SelectedSolanaNft = null;
 
             //m_TouchController = GetComponentInChildren<TouchController>(true);
             //m_GizmoController = GetComponentInChildren<GizmoController>(true);
@@ -80,7 +87,7 @@ namespace ZBoom.Common.SpatialMap
             OutlinePrefab.SetActive(false);
 
             StopEditButton.SetActive(false);
-            DragonAddPointButton.SetActive(false);
+            //DragonAddPointButton.SetActive(false);
             DeleteButton.SetActive(false);
 
             AddPanel.SetActive(true);
@@ -134,7 +141,7 @@ namespace ZBoom.Common.SpatialMap
             {
                 var point = m_MapSession.HitTestOne(new Vector2(Input.touches[0].position.x / Screen.width,
                     Input.touches[0].position.y / Screen.height));
-                
+
                 if (point.OnSome)
                 {
                     StopEditGameObject();
@@ -168,12 +175,12 @@ namespace ZBoom.Common.SpatialMap
                     }
                 }
             }
-            
+
             if (m_SelectedRaribleItem != null)
             {
                 var point = m_MapSession.HitTestOne(new Vector2(Input.touches[0].position.x / Screen.width,
                     Input.touches[0].position.y / Screen.height));
-                
+
                 if (point.OnSome)
                 {
                     StopEditGameObject();
@@ -190,6 +197,34 @@ namespace ZBoom.Common.SpatialMap
                         {
                             StopEditGameObject();
                             CreateNftGameObject(m_SelectedRaribleItem, hitInfo.point);
+                            StartEditGameObject(m_SelectedGameObject);
+                        }
+                    }
+                }
+            }
+
+
+            if (m_SelectedSolanaNft != null)
+            {
+                var point = m_MapSession.HitTestOne(new Vector2(Input.touches[0].position.x / Screen.width,
+                    Input.touches[0].position.y / Screen.height));
+
+                if (point.OnSome)
+                {
+                    StopEditGameObject();
+                    CreateSolanaNftGameObject(m_SelectedSolanaNft, point.Value);
+                    StartEditGameObject(m_SelectedGameObject);
+                }
+                else
+                {
+                    var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                    RaycastHit hitInfo;
+                    if (Physics.Raycast(ray, out hitInfo))
+                    {
+                        if (hitInfo.transform.GetComponent<DenseSpatialMapBlockController>())
+                        {
+                            StopEditGameObject();
+                            CreateSolanaNftGameObject(m_SelectedSolanaNft, hitInfo.point);
                             StartEditGameObject(m_SelectedGameObject);
                         }
                     }
@@ -272,21 +307,33 @@ namespace ZBoom.Common.SpatialMap
 
         public void SelectNftTemplate(RaribleItem raribleItem)
         {
+            m_SelectedSolanaNft = null;
             m_SelectedPropItemController = null;
             m_SelectedRaribleItem = raribleItem;
-            
-            SelectGameObject();
-            
-            //CreateNftGameObject(m_SelectedRaribleItem, Vector3.zero);
 
+            SelectGameObject();
+
+            //CreateNftGameObject(m_SelectedRaribleItem, Vector3.zero);
+        }
+
+        public void SelectSolanaNftTemplate(Nft solanaNft)
+        {
+            m_SelectedPropItemController = null;
+            m_SelectedRaribleItem = null;
+            m_SelectedSolanaNft = solanaNft;
+
+            SelectGameObject();
+
+            //CreateSolanaNftGameObject(m_SelectedSolanaNft, Vector3.zero);
         }
 
         public void SelectTemplate(PropItemController propItemController)
         {
+            m_SelectedSolanaNft = null;
             m_SelectedRaribleItem = null;
             m_SelectedPropItemController = propItemController;
-            
-            
+
+
             SelectGameObject();
         }
 
@@ -298,7 +345,8 @@ namespace ZBoom.Common.SpatialMap
             GizmoPanel.SetActive(false);
 
             PropCollectionGameObject.SetActive(false);
-
+            SolanaNftCollectionGameObject.SetActive(false);
+            
             AddPanel.SetActive(false);
             TapPanel.SetActive(true);
             EditPanel.SetActive(false);
@@ -307,10 +355,10 @@ namespace ZBoom.Common.SpatialMap
         public void CreateGameObject(PropItemController controller, Vector3 initPosition)
         {
             m_IsNft = false;
-            
+
             m_SelectedGameObject = Instantiate(controller.Templet.Object);
             m_SelectedGameObject.name = controller.Templet.Object.name;
-            
+
             Create(m_SelectedGameObject, initPosition);
         }
 
@@ -330,6 +378,18 @@ namespace ZBoom.Common.SpatialMap
             }
         }
 
+        public void CreateSolanaNftGameObject(Nft solanaNft, Vector3 initPosition)
+        {
+            m_IsNft = true;
+            BaseSolanaNftItemController baseNftItemController = m_SolanaNftContentCreator.GetNftPrefab(solanaNft);
+            if (baseNftItemController != null)
+            {
+                m_SelectedGameObject = baseNftItemController.gameObject;
+                baseNftItemController.Create();
+                Create(m_SelectedGameObject, initPosition);
+            }
+        }
+
         private void Create(GameObject selectedGameObject, Vector3 initPosition)
         {
             float localScale = 1f;
@@ -342,7 +402,7 @@ namespace ZBoom.Common.SpatialMap
                     localScale = 1f;
                 }
             }
-            
+
             selectedGameObject.transform.localScale = new Vector3(localScale, localScale, localScale);
 
             if (m_UseCenterPosition)
@@ -384,9 +444,14 @@ namespace ZBoom.Common.SpatialMap
                 PrefabGridController.Deselect();
             }
 
-            if (RaribleGridController != null)
+            if (SolanaGridController != null)
             {
-                RaribleGridController.Deselect();
+                SolanaGridController.Deselect();
+            }
+            
+            if (SolanaOwnedGridController != null)
+            {
+                SolanaOwnedGridController.Deselect();
             }
 
             Debug.LogWarning("SpatialMapGameObjectController DeselectTemplate " + "2");
@@ -401,6 +466,7 @@ namespace ZBoom.Common.SpatialMap
 
             m_SelectedPropItemController = null;
             m_SelectedRaribleItem = null;
+            m_SelectedSolanaNft = null;
 
             Debug.LogWarning("SpatialMapGameObjectController DeselectTemplate " + "4");
 
@@ -503,10 +569,10 @@ namespace ZBoom.Common.SpatialMap
             TapPanel.SetActive(false);
             EditPanel.SetActive(false);
 
-            DragonAddPointButton.gameObject.SetActive(false);
+            //DragonAddPointButton.gameObject.SetActive(false);
 
             m_SelectedGameObject = null;
-            
+
             if (OutlinePrefab)
             {
                 OutlinePrefab.transform.parent = null;
@@ -553,6 +619,8 @@ namespace ZBoom.Common.SpatialMap
                 }
 
                 var copySelectedGameObject = Instantiate(m_SelectedGameObject);
+                copySelectedGameObject.transform.parent = copySelectedGameObject.transform.parent;
+                
                 copySelectedGameObject.transform.position = m_SelectedGameObject.transform.position;
                 copySelectedGameObject.transform.rotation = m_SelectedGameObject.transform.rotation;
                 copySelectedGameObject.transform.localScale = m_SelectedGameObject.transform.localScale;
